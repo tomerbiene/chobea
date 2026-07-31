@@ -150,10 +150,10 @@ def render_movie_detail(movie, back_function):
         imdb_url = f"https://www.imdb.com/find/?q={search_query}"
         letterboxd_url = f"https://letterboxd.com/search/{search_query}/"
 
-        b1, b2, b3 = st.columns([1.5, 7, 1.5])
-        with b1: st.link_button("🟡", imdb_url, help="Search on IMDB", use_container_width=True)
+        b1, b2, b3 = st.columns(3)
+        with b1: st.link_button("⭐ IMDb", imdb_url, help="Search on IMDB", use_container_width=True)
         with b2: st.link_button("🎬 Trailer", youtube_url, use_container_width=True)
-        with b3: st.link_button("🟩", letterboxd_url, help="Search on Letterboxd", use_container_width=True)
+        with b3: st.link_button("🟩 Letterboxd", letterboxd_url, help="Search on Letterboxd", use_container_width=True)
 
     with col2:
         st.markdown(f"<h1 style='margin-bottom:0;'>{title}</h1>", unsafe_allow_html=True)
@@ -301,10 +301,10 @@ with tab_main:
                     st.markdown(f"⭐ **{score:.1f} / 10**")
                     st.caption(overview[:120] + "..." if len(overview) > 120 else overview)
 
-                    b1, b2, b3 = st.columns([1.5, 7, 1.5])
-                    with b1: st.link_button("🟡", imdb_url, help="IMDB", use_container_width=True)
+                    b1, b2, b3 = st.columns(3)
+                    with b1: st.link_button("⭐ IMDb", imdb_url, help="IMDB", use_container_width=True)
                     with b2: st.link_button("🎬 Trailer", youtube_url, use_container_width=True)
-                    with b3: st.link_button("🟩", letterboxd_url, help="Letterboxd", use_container_width=True)
+                    with b3: st.link_button("🟩 Letterboxd", letterboxd_url, help="Letterboxd", use_container_width=True)
 
                     st.button("➕ Add to My Hive", key=f"fav_{item['id']}", on_click=add_to_hive, args=(item,),
                               use_container_width=True)
