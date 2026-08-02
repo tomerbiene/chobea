@@ -18,13 +18,11 @@ st.markdown("""
         padding-bottom: 2rem !important;
     }
 
-    /* Silik Petek (Honeycomb) Arka Plan Dokusu */
     .stApp {
         background-color: #FDFBF7;
         background-image: url("data:image/svg+xml,%3Csvg width='52' height='30' viewBox='0 0 52 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e6a100' fill-opacity='0.04'%3E%3Cpath d='M26 0l13 7.5v15L26 30 13 22.5v-15L26 0zm0 2.309L15 9.232v11.536L26 27.691l11-6.923V9.232L26 2.309zM0 15l13 7.5v15L0 45l-13-7.5v-15L0 15zm0 2.309l-11 6.923v11.536l11 6.923 11-6.923V24.232L0 17.309zM52 15l13 7.5v15L52 45l-13-7.5v-15L52 15zm0 2.309l-11 6.923v11.536l11 6.923 11-6.923V24.232L52 17.309z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 
-    /* Görseller İçin Minimalist Gölgelendirme (Ağır Çerçeveler Yerine) */
     div[data-testid="stImage"] img {
         height: 380px !important;
         object-fit: cover !important;
@@ -36,7 +34,6 @@ st.markdown("""
         transform: translateY(-5px);
     }
 
-    /* Butonları biraz daha yumuşak hatlı yapalım */
     .stButton button, a[data-testid="baseLinkButton"] {
         border-radius: 8px !important;
     }
@@ -65,8 +62,7 @@ def add_to_hive(movie_dict):
         st.session_state.my_hive.append(movie_dict)
 
 
-def clear_hive():
-    st.session_state.my_hive = []
+def clear_hive(): st.session_state.my_hive = []
 
 
 def set_director(id, name):
@@ -108,21 +104,13 @@ def back_to_act_list(): st.session_state.act_selected_movie = None
 @st.cache_data(show_spinner=False)
 def get_showcase(category="director"):
     if category == "director":
-        names = [
-            "Christopher Nolan", "Quentin Tarantino", "David Fincher",
-            "Martin Scorsese", "Denis Villeneuve", "Stanley Kubrick",
-            "Steven Spielberg", "Alfred Hitchcock", "Ridley Scott",
-            "James Cameron", "Hayao Miyazaki", "Bong Joon Ho"
-        ]
+        names = ["Christopher Nolan", "Quentin Tarantino", "David Fincher", "Martin Scorsese", "Denis Villeneuve",
+                 "Stanley Kubrick", "Steven Spielberg", "Alfred Hitchcock", "Ridley Scott", "James Cameron",
+                 "Hayao Miyazaki", "Bong Joon Ho"]
     else:
-        names = [
-            "Leonardo DiCaprio", "Meryl Streep",
-            "Christian Bale", "Scarlett Johansson",
-            "Cillian Murphy", "Cate Blanchett",
-            "Robert De Niro", "Anne Hathaway",
-            "Brad Pitt", "Natalie Portman",
-            "Al Pacino", "Viola Davis"
-        ]
+        names = ["Leonardo DiCaprio", "Meryl Streep", "Christian Bale", "Scarlett Johansson", "Cillian Murphy",
+                 "Cate Blanchett", "Robert De Niro", "Anne Hathaway", "Brad Pitt", "Natalie Portman", "Al Pacino",
+                 "Viola Davis"]
 
     showcase_list = []
     for name in names:
@@ -133,7 +121,6 @@ def get_showcase(category="director"):
     return showcase_list
 
 
-# --- REUSABLE DETAIL VIEW COMPONENT ---
 def render_movie_detail(movie, back_function):
     st.button("🔙 Back to Filmography", on_click=back_function)
     st.write("")
@@ -149,11 +136,15 @@ def render_movie_detail(movie, back_function):
         youtube_url = f"https://www.youtube.com/results?search_query={search_query}+official+trailer"
         imdb_url = f"https://www.imdb.com/find/?q={search_query}"
         letterboxd_url = f"https://letterboxd.com/search/{search_query}/"
+        justwatch_url = f"https://www.justwatch.com/us/search?q={search_query}"
 
         b1, b2, b3 = st.columns(3)
         with b1: st.link_button("⭐ IMDb", imdb_url, help="Search on IMDB", use_container_width=True)
-        with b2: st.link_button("🎬 Trailer", youtube_url, use_container_width=True)
+        with b2: st.link_button("🎬 Trailer", youtube_url, help="Watch Trailer", use_container_width=True)
         with b3: st.link_button("🟩 Letterboxd", letterboxd_url, help="Search on Letterboxd", use_container_width=True)
+
+        st.write("")
+        st.link_button("📺 Where to Watch?", justwatch_url, use_container_width=True)
 
     with col2:
         st.markdown(f"<h1 style='margin-bottom:0;'>{title}</h1>", unsafe_allow_html=True)
@@ -165,20 +156,33 @@ def render_movie_detail(movie, back_function):
         st.write(movie.get("overview", "No overview available for this title."))
 
 
-# --- SIDEBAR (SABİT 3 FİLTRE) ---
+# --- SIDEBAR (KAVRAM KARMAŞASINDAN ARINDIRILMIŞ KUSURSUZ FİLTRELER) ---
 with st.sidebar:
     st.header("🍯 Filter Your Hive")
     st.caption("Adjust your basic preferences.")
 
-    c_type = st.radio("What are you looking for?", ["🎬 Movie", "📺 TV Show & Mini-Series", "🎨 Anime & Animation"])
-    c_pool = st.radio("What caliber do you prefer?", ["🏆 Cult Classics", "💎 Hidden Gems", "🍿 Popular Hits"])
-    c_time = st.radio("Time Budget", ["⏱️ Any Duration", "⏱️ Quick (< 100 min)", "⏱️ Standard (100 - 130 min)",
-                                      "⏱️ Marathon (130+ min)"])
+    c_type = st.radio("What are you looking for?", ["🎬 Movie", "📺 TV Show", "🎨 Anime"])
+
+    # Kült vs Klasik tartışmasını bitiren en net kalibre ayrımı
+    c_pool = st.radio("What caliber do you prefer?", ["🏆 All-Time Masterpieces", "💎 Hidden Gems", "🍿 Trending Now"])
+
+    st.write("")
+    st.caption("Duration / Vibe")
+
+    # Süre ve Vibe mantığı (En stabil çalışan halleriyle)
+    if c_type == "🎬 Movie":
+        c_filter3 = st.radio("Duration", ["⏱️ Any", "⏱️ Standard (100 - 120 min)", "⏱️ Epic (130+ min)"])
+    elif c_type == "📺 TV Show":
+        c_filter3 = st.radio("Vibe & Genre",
+                             ["🌍 Any Vibe", "🎭 Drama & Prestige", "😂 Comedy & Chill", "🕵️ Crime & Mystery"])
+    else:
+        c_filter3 = st.radio("Vibe & Genre", ["🌍 Any Vibe", "⚔️ Dark Fantasy & Action", "🌸 Chill & Slice of Life",
+                                              "🤖 Sci-Fi & Cyberpunk"])
 
 # --- HERO SECTION ---
 st.markdown("<h1 style='text-align: center; font-size: 4rem; margin-bottom: 0;'>🐝 Chobea</h1>", unsafe_allow_html=True)
 st.markdown(
-    "<p style='text-align: center; font-size: 1.1rem; font-style: italic; margin-bottom: 2rem;'>Your personal cinema curation assistant. Curating 3 tailored masterpieces from thousands of films into your hive — grab your popcorn and watch on your favorite platforms!</p>",
+    "<p style='text-align: center; font-size: 1.1rem; font-style: italic; margin-bottom: 2rem;'>Your personal cinema curation assistant. Curating tailored masterpieces from thousands of films into your hive.</p>",
     unsafe_allow_html=True)
 
 tab_main, tab_director, tab_actor = st.tabs(["🎲 Smart Choice", "🎥 Director Archive", "🎭 Performers Archive"])
@@ -197,70 +201,112 @@ with tab_main:
 
     if extract_button:
         with st.spinner("Extracting masterpieces from the archive..."):
-            endpoint = "movie" if c_type != "📺 TV Show & Mini-Series" else "tv"
-            params = {"api_key": API_KEY, "language": "en-US", "page": 1}
 
+            # Kategori Endpointleri
             if c_type == "🎬 Movie":
-                params["without_genres"] = "16"
-            elif c_type == "🎨 Anime & Animation":
-                params["with_genres"] = "16"
+                endpoint = "movie"
+                params = {"api_key": API_KEY, "language": "en-US", "page": 1, "without_genres": "16"}
+            elif c_type == "📺 TV Show":
+                endpoint = "tv"
+                params = {"api_key": API_KEY, "language": "en-US", "page": 1, "without_genres": "16"}
+            else:  # Anime
+                endpoint = "tv"
+                params = {"api_key": API_KEY, "language": "en-US", "page": 1, "with_genres": "16",
+                          "with_origin_country": "JP"}
 
-            if c_pool == "🏆 Cult Classics":
-                params["sort_by"] = "vote_count.desc"
+            # Havuz (Kalibre) Ayarları
+            vote_threshold = 1000
+
+            if c_pool == "🏆 All-Time Masterpieces":
+                params["sort_by"] = "vote_average.desc"
                 params["vote_average.gte"] = 8.0
-                if c_type == "🎬 Movie":
-                    params["vote_count.gte"] = 10000
-                elif c_type == "📺 TV Show & Mini-Series":
-                    params["vote_count.gte"] = 3000
-                else:
-                    params["vote_count.gte"] = 1500
+                vote_threshold = 3000 if endpoint == "movie" else 1500
             elif c_pool == "💎 Hidden Gems":
                 params["sort_by"] = "vote_average.desc"
-                params["vote_average.gte"] = 7.4
-                if c_type == "🎬 Movie":
-                    params["vote_count.gte"] = 300
-                    params["vote_count.lte"] = 3000
-                else:
-                    params["vote_count.gte"] = 100
-                    params["vote_count.lte"] = 1500
+                params["vote_average.gte"] = 7.2
+                params["vote_count.gte"] = 200
+                params["vote_count.lte"] = 1500
+                vote_threshold = 200  # Hidden gem için override
             else:
                 params["sort_by"] = "popularity.desc"
-                if c_type == "🎬 Movie":
-                    params["vote_count.gte"] = 1500
-                else:
-                    params["vote_count.gte"] = 500
+                vote_threshold = 1000
 
-            if endpoint == "movie":
-                if c_time == "⏱️ Quick (< 100 min)":
-                    params["with_runtime.lte"] = 99
-                elif c_time == "⏱️ Standard (100 - 130 min)":
+            # Vibe ve Süre Daraltmaları
+            if c_type == "🎬 Movie":
+                if "Standard" in c_filter3:
                     params["with_runtime.gte"] = 100
-                    params["with_runtime.lte"] = 130
-                elif c_time == "⏱️ Marathon (130+ min)":
-                    params["with_runtime.gte"] = 131
+                    params["with_runtime.lte"] = 120
+                elif "Epic" in c_filter3:
+                    params["with_runtime.gte"] = 130
 
+            elif c_type == "📺 TV Show":
+                if "Drama" in c_filter3:
+                    params["with_genres"] = "18"
+                elif "Comedy" in c_filter3:
+                    params["with_genres"] = "35"
+                elif "Crime" in c_filter3:
+                    params["with_genres"] = "80,9648"
+
+            elif c_type == "🎨 Anime":
+                if "Dark Fantasy" in c_filter3:
+                    params["with_genres"] = "16,10759"
+                elif "Chill" in c_filter3:
+                    params["with_genres"] = "16,35"
+                elif "Sci-Fi" in c_filter3:
+                    params["with_genres"] = "16,10765"
+
+            if c_pool != "💎 Hidden Gems":
+                params["vote_count.gte"] = vote_threshold
+
+            # 1. İstek: Toplam sayfayı bul ve havuzu genişlet
             response = requests.get(f"{BASE_URL}/discover/{endpoint}", params=params)
 
             if response.status_code == 200:
-                results = response.json().get("results", [])
-                new_candidates = [f for f in results if f.get("id") not in st.session_state.shown_movies]
-                selected = []
+                data = response.json()
+                total_pages = data.get("total_pages", 1)
 
-                if len(new_candidates) >= 3:
-                    selected = random.sample(new_candidates, 3)
-                elif len(results) >= 3:
-                    st.session_state.shown_movies = []
-                    selected = random.sample(results, 3)
+                max_page = min(5, total_pages)
+                if max_page > 0:
+                    target_page = random.randint(1, max_page)
+                    if target_page > 1:
+                        params["page"] = target_page
+                        response = requests.get(f"{BASE_URL}/discover/{endpoint}", params=params)
+                        data = response.json()
 
-                if selected:
-                    st.session_state.shown_movies.extend([f["id"] for f in selected])
-                    st.session_state.current_results = selected
+                results = data.get("results", [])
+                random.shuffle(results)  # Havuzu karıştır
+
+                valid_candidates = []
+
+                # ACIMASIZ PYTHON SÜZGECİ (SADECE FİLMLERDE SÜRE TEYİDİ İÇİN)
+                for f in results:
+                    if f.get("id") in st.session_state.shown_movies: continue
+
+                    if c_type == "🎬 Movie" and "Any" not in c_filter3:
+                        try:
+                            # TMDB'den gelen veriye güvenmeyip arkadan filmin gerçek süresini sorguluyoruz
+                            det = requests.get(f"{BASE_URL}/movie/{f['id']}", params={"api_key": API_KEY}).json()
+                            runtime = det.get("runtime", 0)
+
+                            if runtime == 0: continue  # Süresi bilinmiyorsa ele
+                            if "Standard" in c_filter3 and (runtime < 100 or runtime > 120): continue
+                            if "Epic" in c_filter3 and runtime < 130: continue
+                        except:
+                            pass
+
+                    valid_candidates.append(f)
+                    if len(valid_candidates) == 3: break  # 3 tane hatasız yapım bulduğunda aramayı durdur
+
+                if len(valid_candidates) > 0:
+                    st.session_state.shown_movies.extend([f["id"] for f in valid_candidates])
+                    st.session_state.current_results = valid_candidates
                     st.session_state.current_type = endpoint
                 else:
-                    st.error("Not enough results found for these specific criteria. Try changing the filters!")
+                    st.error("Not enough results found for these specific criteria. Try expanding the filters!")
             else:
                 st.error("API connection failed. Please check your API Key.")
 
+    # --- GOSTERIM KISMI ---
     if len(st.session_state.current_results) == 0:
         if len(st.session_state.daily_hive) == 0:
             with st.spinner("Loading Today's Hive..."):
@@ -292,6 +338,7 @@ with tab_main:
             youtube_url = f"https://www.youtube.com/results?search_query={search_query}+official+trailer"
             imdb_url = f"https://www.imdb.com/find/?q={search_query}"
             letterboxd_url = f"https://letterboxd.com/search/{search_query}/"
+            justwatch_url = f"https://www.justwatch.com/us/search?q={search_query}"
 
             with cols[idx]:
                 with st.container():
@@ -303,14 +350,15 @@ with tab_main:
 
                     b1, b2, b3 = st.columns(3)
                     with b1: st.link_button("⭐ IMDb", imdb_url, help="IMDB", use_container_width=True)
-                    with b2: st.link_button("🎬 Trailer", youtube_url, use_container_width=True)
+                    with b2: st.link_button("🎬 Trailer", youtube_url, help="YouTube", use_container_width=True)
                     with b3: st.link_button("🟩 Letterboxd", letterboxd_url, help="Letterboxd", use_container_width=True)
 
+                    st.write("")
+                    st.link_button("📺 Where to Watch?", justwatch_url, use_container_width=True)
                     st.button("➕ Add to My Hive", key=f"fav_{item['id']}", on_click=add_to_hive, args=(item,),
                               use_container_width=True)
 
     if st.session_state.my_hive:
-        st.write("")
         st.write("")
         st.divider()
         st.markdown("### 🍯 My Hive (Your Selected Masterpieces)")
@@ -326,12 +374,7 @@ with tab_main:
         export_text += "\nCurated via chobea.streamlit.app"
 
         st.code(export_text, language="text")
-        col_clear, col_info = st.columns([1, 4])
-        with col_clear:
-            st.button("🗑️ Clear Hive", on_click=clear_hive, use_container_width=True)
-        with col_info:
-            st.caption(
-                "👆 Hover over the text box and click the **Copy icon** in the top right to share your list on WhatsApp!")
+        st.button("🗑️ Clear Hive", on_click=clear_hive, use_container_width=True)
 
 # ==========================================
 # 2. TAB: DIRECTOR ARCHIVE
@@ -367,8 +410,8 @@ with tab_director:
                     seen_ids = set()
 
                     for film in crew_data:
-                        job = film.get("job", "")
-                        if job == "Director" and film.get("release_date") and film.get("vote_count", 0) > 300:
+                        if film.get("job", "") == "Director" and film.get("release_date") and film.get("vote_count",
+                                                                                                       0) > 300:
                             if film["id"] not in seen_ids:
                                 seen_ids.add(film["id"])
                                 unique_films.append(film)
