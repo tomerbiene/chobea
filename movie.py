@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import random
 import urllib.parse
-import concurrent.futures
 
 # TMDB API Key
 API_KEY = "9da4331eb5011edb49d11a04767898a2"
@@ -103,7 +102,6 @@ def back_to_act_list(): st.session_state.act_selected_movie = None
 
 
 @st.cache_data(show_spinner=False)
-@st.cache_data(show_spinner=False)
 def get_showcase(category="director"):
     if category == "director":
         names = ["Christopher Nolan", "Quentin Tarantino", "David Fincher", "Martin Scorsese", "Denis Villeneuve",
@@ -114,28 +112,14 @@ def get_showcase(category="director"):
                  "Cate Blanchett", "Robert De Niro", "Anne Hathaway", "Brad Pitt", "Natalie Portman", "Al Pacino",
                  "Viola Davis"]
 
-    # İç içe minik bir arama motoru kurduk
-    def fetch_person(name):
-        try:
-            res = requests.get(f"{BASE_URL}/search/person",
-                               params={"api_key": API_KEY, "query": name, "language": "en-US"}, timeout=3)
-            if res.status_code == 200 and res.json().get("results"):
-                person = res.json()["results"][0]
-                return {"name": person["name"], "id": person["id"], "photo": person.get("profile_path")}
-        except:
-            pass
-        return None
-
     showcase_list = []
-
-    # BÜTÜN SİHRİN OLDUĞU YER: 12 ismi sırayla bekletmek yerine, hepsine aynı anda (paralel) saldırıyoruz!
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = executor.map(fetch_person, names)
-        for res in results:
-            if res is not None:
-                showcase_list.append(res)
-
+    for name in names:
+        res = requests.get(f"{BASE_URL}/search/person", params={"api_key": API_KEY, "query": name, "language": "en-US"})
+        if res.status_code == 200 and res.json().get("results"):
+            person = res.json()["results"][0]
+            showcase_list.append({"name": person["name"], "id": person["id"], "photo": person.get("profile_path")})
     return showcase_list
+
 
 def render_movie_detail(movie, back_function):
     st.button("🔙 Back to Filmography", on_click=back_function)
